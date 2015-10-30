@@ -4,17 +4,16 @@ my first clock
 
 <b>CS 207 Building Interactive Gadgets: Fall 2015</b>
 
-October 30 2015
-Joey Tiefenbach
-tiefejos@uregina.ca
+October 30 2015 <br>
+Joey Tiefenbach <br>
+tiefejos@uregina.ca <br>
 
 
 
 <b>Goals</b>
-<br>
-1.Build an arduino digital clock.<br/>
-2.LEDs installed. <br/> 
-3.Play Big Ben chime. <br/> 
+1.Build an arduino digital clock. <br>
+2.LEDs installed <br>
+3.Play Big Ben chime  <br>
 
 
 
