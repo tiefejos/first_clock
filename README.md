@@ -10,7 +10,7 @@ tiefejos@uregina.ca
 
 
 
-Goals
+<b>Goals</b>
 1.Build an arduino digital clock.
 2.LEDs installed
 3.Play Big Ben chime 
@@ -18,10 +18,10 @@ Goals
 
 
 
-Hardware
+<b>Hardware</b>
 
 
-Software
+<b>Software</b>
 
 My code is incomplete. I will update the link as soon as I finish the code
 
