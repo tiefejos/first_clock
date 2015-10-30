@@ -2,7 +2,7 @@
 my first clock
 
 
-CS 207 Building Interactive Gadgets: Fall 2015
+<b>CS 207 Building Interactive Gadgets: Fall 2015</b>
 
 October 30 2015
 Joey Tiefenbach
