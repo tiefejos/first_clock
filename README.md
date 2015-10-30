@@ -6,8 +6,10 @@ my first clock
 
 October 30 2015 <br>
 Joey Tiefenbach <br>
-tiefejos@uregina.ca <br>
+tiefejos@uregina.ca 
 
+
+------------
 
 
 <b>Goals</b><br>
@@ -15,12 +17,13 @@ tiefejos@uregina.ca <br>
 2.LEDs installed <br>
 3.Play Big Ben chime  <br>
 
+-------------------
 
 
 
 <b>Hardware</b><br>
 
-
+--------------------------
 <b>Software</b> <br>
 
 My code is incomplete. I will update the link as soon as I finish the code
