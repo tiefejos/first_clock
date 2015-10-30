@@ -11,9 +11,10 @@ tiefejos@uregina.ca
 
 
 <b>Goals</b>
-1.Build an arduino digital clock.
-2.LEDs installed
-3.Play Big Ben chime 
+<br>
+1.Build an arduino digital clock.<br/>
+2.LEDs installed. <br/> 
+3.Play Big Ben chime. <br/> 
 
 
 
