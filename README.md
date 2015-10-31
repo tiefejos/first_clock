@@ -17,7 +17,6 @@ tiefejos@uregina.ca
 2. 24 LEDs installed and in sync with time and chime melody. <br>
 3. Play the Westminster Quarters <br>
 
-4. 
 
 -------------------
 
