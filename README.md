@@ -23,6 +23,10 @@ tiefejos@uregina.ca
 
 
 **Hardware**
+LTC 637C1P CLOCK LED DISPLAY
+Arduino Uno
+LEDS
+Wires/Resistors
 
 --------------------------
 **Software**
