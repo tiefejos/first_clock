@@ -14,9 +14,7 @@ tiefejos@uregina.ca
 
 **Goals**<br>
 1. Build an arduino digital clock. <br>
-
 2. 24 LEDs installed and in sync with time and chime melody. <br>
-
 3. Play the Westminster Quarters <br>
 
 4. 
@@ -27,11 +25,8 @@ tiefejos@uregina.ca
 
 **Hardware**<br>
 1. LTC 637C1P CLOCK LED DISPLAY<br>
-
 2. Arduino Uno<br>
-
 3. LEDS<br>
-
 4. Wires/Resistors<br>
 
 --------------------------
