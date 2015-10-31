@@ -2,7 +2,7 @@
 my first clock
 
 
-<b>CS 207 Building Interactive Gadgets: Fall 2015</b>
+#CS 207 Building Interactive Gadgets: Fall 2015#
 
 October 30 2015 <br>
 Joey Tiefenbach <br>
@@ -12,7 +12,7 @@ tiefejos@uregina.ca
 ------------
 
 
-<b>Goals</b><br>
+**Goals**
 1.Build an arduino digital clock. <br>
 2.24 LEDs installed and in sync with time and chime melody. <br>
 3.Play the Westminster Quarters 
@@ -22,10 +22,10 @@ tiefejos@uregina.ca
 
 
 
-<b>Hardware</b><br>
+**Hardware**
 
 --------------------------
-<b>Software</b> <br>
+**Software**
 
 My code is incomplete. I will update the link as soon as I finish the code
 
