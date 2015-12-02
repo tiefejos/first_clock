@@ -14,7 +14,7 @@ tiefejos@uregina.ca
 
 **Goals**<br>
 1. Build an arduino digital clock. <br>
-2. 24 LEDs installed and in sync with time and chime melody. <br>
+2. 17 LEDs installed and in sync with time and chime melody. <br>
 3. Play the Westminster Quarters <br>
 
 
@@ -23,18 +23,21 @@ tiefejos@uregina.ca
 
 
 **Hardware**<br>
-1. LTC 637C1P CLOCK LED DISPLAY<br>
+1. Buzzer<br>
 2. Arduino Uno<br>
 3. LEDS<br>
 4. Wires/Resistors<br>
+5. three 74HC595 shift registers<br>
+6. two Breadboards
+7. 
 
 --------------------------
 **Software**<br>
 
-My code is incomplete. I will update the link as soon as I finish the code
+My code is completed. See attached Above
 
-However I can tell you that I use the Time Library from Ardunio.<br>
-Reference: Time example: TimeSerial.pde
+This project requires Time Library and below is the link to download. <br>
+http://www.pjrc.com/teensy/td_libs_Time.html
 
 
 
