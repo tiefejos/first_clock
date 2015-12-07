@@ -33,7 +33,7 @@ tiefejos@uregina.ca
 --------------------------
 **Software**<br>
 
-My code is completed. See attached Above
+My code is completed. Click on the firstProject folder and then click on it to get code.
 
 This project requires Time Library and below is the link to download. <br>
 http://www.pjrc.com/teensy/td_libs_Time.html
