@@ -1,5 +1,4 @@
-# first_clock
-my first clock
+
 
 
 #CS 207 Building Interactive Gadgets: Fall 2015#
@@ -29,7 +28,7 @@ tiefejos@uregina.ca
 4. Wires/Resistors<br>
 5. three 74HC595 shift registers<br>
 6. two Breadboards
-7. 
+
 
 --------------------------
 **Software**<br>
