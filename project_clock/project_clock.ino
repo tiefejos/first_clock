@@ -1,11 +1,17 @@
 /*
- * TimeSerial.pde
+ *  CS 207 Bianry CLock
+    Joey Tiefenbach
+    December 7 
+ *
+ * Reference TimeSerial.pde
  * example code illustrating Time library set through serial port messages.
  *
  * Messages consist of the letter T followed by ten digit time (as seconds since Jan 1 1970)
- * you can send the text on the next line using Serial Monitor to set the clock to noon Jan 1 2013
- T1357041600
+ * you can send the text on the next line using Serial Monitor to set the clock in any number
  *
+ *   T1448852160 2:56:00
+ *   T1421638195 3:29:55
+ *   T1421636395 2:59:55
  * A Processing example sketch to automatically send the messages is included in the download
  * On Linux, you can use "date +T%s\n > /dev/ttyACM0" (UTC time zone)
  */
@@ -13,18 +19,21 @@
 #include <Time.h>
 #define TIME_HEADER  "T"   // Header tag for serial time sync message
 #define TIME_REQUEST  7    // ASCII bell character requests a time sync message 
-//int j;
-// void makePattern(int j, int leds[], int pattern[][j], int num);
-//int ledPins[] = {2, 3, 4, 5, 6, 7};
-//int ledPins[] = {2, 3, 4};
+#define NOTE_E4  330
+#define NOTE_GS4 415
+#define NOTE_FS5 740
+#define NOTE_B3  247  /* */
+
 const int leds8 = 8;
-int dataS = 2;// seconds
-int dataM = 9; //minutes
-int dataH = 9;// hour
-int clock = 3;
-int latchS = 4;
-int latchM = 10;
-int latchH = 10; //hour
+const int dataS = 2;// seconds blue
+const int latchS = 4;
+const int dataM = 9; //minutes blue 9
+const int latchM = 10; //green  10
+const int clock = 3;
+const int dataH = 7;// hour blue
+const int latchH = 6; //hourr 11 yellow
+const int tonePin = 13;
+
 //four rows and two columns
 int secondpattern[][8] = {{LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW},  {HIGH, LOW, LOW, LOW, LOW, LOW, LOW, LOW},     {LOW, HIGH, LOW, LOW, LOW, LOW, LOW, LOW},   {HIGH, HIGH, LOW, LOW, LOW, LOW, LOW, LOW}, /* 0-3*/
   {LOW, LOW, HIGH, LOW, LOW, LOW, LOW, LOW}, {HIGH, LOW, HIGH, LOW, LOW, LOW, LOW, LOW},    {LOW, HIGH, HIGH, LOW, LOW, LOW, LOW, LOW},  {HIGH, HIGH, HIGH, LOW, LOW, LOW, LOW, LOW}, /* 4-7*/
@@ -44,17 +53,30 @@ int secondpattern[][8] = {{LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW},  {HIGH, LOW,
 }; /* 56-59*/
 
 int hourpattern[][8] = {{LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW},  {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH}};
+int hourpatternTwo[][8] = { {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH}, {HIGH, LOW, LOW, LOW, LOW, LOW, LOW, LOW},
+  {LOW, HIGH, LOW, LOW, LOW, LOW, LOW, LOW}, {HIGH, HIGH, LOW, LOW, LOW, LOW, LOW, LOW},
+  {LOW, LOW, HIGH, LOW, LOW, LOW, LOW, LOW},  {HIGH, LOW, HIGH, LOW, LOW, LOW, LOW, LOW},
+  {LOW, HIGH, HIGH, LOW, LOW, LOW, LOW, LOW}, {HIGH, HIGH, HIGH, LOW, LOW, LOW, LOW, LOW},
+  {LOW, LOW, LOW, HIGH, LOW, LOW, LOW, LOW},  {HIGH, LOW, LOW, HIGH, LOW, LOW, LOW, LOW},
+  {LOW, HIGH, LOW, HIGH, LOW, LOW, LOW, LOW},  {HIGH, HIGH, LOW, HIGH, LOW, LOW, LOW, LOW},
+  {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH}
+};
+
+int firstFreq[] = {415,  370, 330, 247}; //first quarter
+int halfFreq[] = {330, 415,  370, 247, 330,   370, 415, 330};  //half hour
+int thirdFreq[] = {415, 330,  370, 247, 247,  370, 415, 247, 415, 370, 330, 247}; //third quarter
+int fullFreq[] = {330, 415,  370, 247, 330,  370, 415, 330, 415, 330,  370, 247, 247,  370, 415, 247};  //Full hour
+int timeDur[] = {1000, 1000, 1000, 2000, 1000, 1000, 1000, 2000, 1000, 1000, 1000, 2000, 1000, 1000, 1000, 2000};
 
 void setup() {
   Serial.begin(9600);
   while (!Serial) ; // Needed for Leonardo only
-  pinMode(dataM, OUTPUT);
-  pinMode(clock, OUTPUT);
-  pinMode(latchM, OUTPUT);
 
+  pinMode(clock, OUTPUT);
+  pinMode(dataM, OUTPUT);
+  pinMode(latchM, OUTPUT);
   pinMode(dataS, OUTPUT);
   pinMode(latchS, OUTPUT);
-
   pinMode(dataH, OUTPUT);
   pinMode(latchH, OUTPUT);
 
@@ -69,10 +91,7 @@ void loop() {
   if (timeStatus() != timeNotSet) {
     digitalClockDisplay();
     digitalClockLED();
-
   }
-
-  delay(1000);
 }
 
 void digitalClockDisplay() {
@@ -80,9 +99,9 @@ void digitalClockDisplay() {
   Serial.print(hour());
   printDigits(minute());
   printDigits(second());
-  Serial.print(" ");
-  Serial.print(day());
-  Serial.print(" ");
+  //Serial.print(" ");
+  //Serial.print(day());
+  //Serial.print(" ");
   //Serial.print(month());
   //Serial.print(" ");
   //Serial.print(year());
@@ -92,50 +111,100 @@ void digitalClockDisplay() {
 void digitalClockLED() {
 
   int s = second();
-  int h = hour();
+  int h = hourFormat12();
   int m = minute();
 
-  switch (m)
-  {
-    case (0):
-      fullHour();
-      break;
-    case (15):
-      firstQuarter();
-      break;
-    case 30:
-      halfHour();
-      break;
-    case 45:
-      thirdQuater();
-      break;
-    default:
-      makePattern(m, dataM, secondpattern, latchS);
+  makePattern(h, dataH, hourpatternTwo, latchH);
+  makePattern(m, dataM, secondpattern, latchM);
 
+  if (s == 0)
+  {
+    switch (m)
+    {
+      case (0):
+        playWest(16, fullFreq, true);
+        break;
+      case (15):
+        playWest(4, firstFreq, false);
+        break;
+      case 30:
+        playWest(8, halfFreq, false);
+        break;
+      case 45:
+        playWest(12, thirdFreq, false);
+        break;
+      default:
+        makePattern(m, dataM, secondpattern, latchM);
+        makePattern(s, dataS, secondpattern, latchS);
+    }
+  }
+  else {
+    //  makePattern(m, dataM, secondpattern, latchM);
+    makePattern(s, dataS, secondpattern, latchS);
   }
 
-  makePattern(s, dataS, secondpattern, latchS);
-  makePattern(h, dataH, secondpattern, latchH);
-
 }
-
-
-void makePattern(int j, int leds, int secondpattern[][8], int latch)
+/* Credits go to Alex Clark for this function */
+void makePattern(int timeUnit, int data, int pattern[][8], int latch)
 {
-  int delayTime = 200;
   digitalWrite(latch, LOW);
   for (int i = 0; i < leds8; i++)
   {
-    //digitalWrite(leds[i], secondpattern[j][i]);
-    digitalWrite(leds, secondpattern[j][i]);
+    digitalWrite(data, pattern[timeUnit][i]);
     digitalWrite(clock, HIGH);
     delay(1);
     digitalWrite(clock, LOW);
   }
   digitalWrite(latch, HIGH);
-  // delay(2000);
 }
 
+
+void playWest(int i, int freq[], bool isHour)
+{
+  int j;
+  for (int k = 0 ; k < i ; k++)
+  {
+    tone(13, freq[k], timeDur[k]);
+    j = second();
+    makePattern(j, dataS, secondpattern, latchS);
+
+    if (k == 3 || k == 7 || k == 11 || k == 15)
+    {
+      delay(1000);
+      j = second();
+      makePattern(j, dataS, secondpattern, latchS);
+      delay(1000);
+    }
+    else
+    {
+      delay(1000);
+    }
+  }
+  
+  if (isHour)
+  {
+    bigBen();
+  }
+}
+void bigBen()
+{
+  int h = hour();
+  int s = second();
+  for (int i = 1; i <= h; i++)
+  {
+    makePattern(1, dataH, hourpattern, latchH);
+    makePattern(0, dataM, hourpattern, latchM);
+    tone(13, 165, 1000);
+    s = second();
+    makePattern(s, dataS, secondpattern, latchS);
+    delay(1000);
+    s = second();
+    makePattern(s, dataS, secondpattern, latchS);
+    makePattern(0, dataH, hourpattern, latchH);
+    makePattern(1, dataM, hourpattern, latchM);
+    delay(1000);
+  }
+}
 void printDigits(int digits) {
   // utility function for digital clock display: prints preceding colon and leading 0
   Serial.print(":");
@@ -153,255 +222,9 @@ void processSyncMessage() {
     }
   }
 }
+
 time_t requestSync()
 {
   Serial.write(TIME_REQUEST);
   return 0; // the time will be sent later in response to serial mesg
 }
-
-void firstQuarter() {
-  int j = 15;
-  tone(13, 415, 1000);
- makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-
-  j = 16;
-  tone(13, 740, 1000);
- makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-
-  j = 17;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-
-  j = 18;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 19;
-  makePattern(j, dataS, secondpattern, latchS);
-  //delay(1000);
-}
-void halfHour() {
-  int j = 30;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 31;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 32;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 33;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 34;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 35;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 36;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 37;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 38;
-  tone(13, 370, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 39;
-  makePattern(j, dataS, secondpattern, latchS);
-}
-
-void thirdQuater() {
-  int j = 45;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 46;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 47;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 48;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 49;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-
-  j = 50;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 51;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 52;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 53;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 54;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-
-  j = 55;
-  tone(13, 377, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 56;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 57;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 58;
-  tone(13, 330, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 59;
-  makePattern(j, dataS, secondpattern, latchS);
-}
-
-void fullHour() {
-  int j = 0;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 1;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 2;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 3;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 4;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  //////////////////
-  j = 5;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 6;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 7;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 8;
-  tone(13, 370, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 9;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  //////////////////////////////////
-  j = 10;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 11;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 12;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 13;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 14;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  //////////////////////////////////////
-  j = 15;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 16;
-  tone(13, 330, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 17;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 18;
-  tone(13, 377, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 19;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  ///////////////////////////////
-  j = 20;
-  tone(13, 377, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 21;
-  tone(13, 740, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 22;
-  tone(13, 415, 1000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 23;
-  tone(13, 330, 2000);
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  j = 24;
-  makePattern(j, dataS, secondpattern, latchS);
-  delay(1000);
-  ////////////////////////
-  bigBen();
-}
-
-void bigBen()
-{
-  int h = hour();
-  int s = 1;
-  int t = 0;
-  for (int i = 1; i <= h; i++)
-  {
-    makePattern(s, dataH, secondpattern,latchH);
-    tone(13, 165, 1000);
-    //makePattern(s, ledPins, secondpattern, 6);
-    delay(1000);
-    makePattern(t, dataH, secondpattern,latchH);
-    delay(1000);
-  }
-}
-
-
