@@ -29,6 +29,7 @@ tiefejos@uregina.ca
 5. three 74HC595 shift registers<br>
 6. two Breadboards
 
+https://github.com/tiefejos/first_clock/files/54035/clockwithbuzzer.jpg
 
 --------------------------
 **Software**<br>
