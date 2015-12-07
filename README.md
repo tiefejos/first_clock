@@ -34,7 +34,7 @@ https://github.com/tiefejos/first_clock/files/54035/clockwithbuzzer.jpg
 --------------------------
 **Software**<br>
 
-My code is completed. Click on the firstProject folder and then click on firstProject.ide to get code.
+My code is completed. Click on the firstProject folder and then click on project_clock.ide to get code.
 
 This project requires Time Library and below is the link to download. <br>
 http://www.pjrc.com/teensy/td_libs_Time.html
