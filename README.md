@@ -24,12 +24,12 @@ tiefejos@uregina.ca
 **Hardware**<br>
 1. Buzzer<br>
 2. Arduino Uno<br>
-3. LEDS<br>
+3. LEDs<br>
 4. Wires/Resistors<br>
-5. three 74HC595 shift registers<br>
-6. two Breadboards
+5. Three 74HC595 shift registers<br>
+6. Two Breadboards
 
-** Diagram of the Circuit **
+**Diagram of the Circuit**<br>
 https://github.com/tiefejos/first_clock/files/54035/clockwithbuzzer.jpg
 
 --------------------------
